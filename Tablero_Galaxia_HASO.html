@@ -1,0 +1,924 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<link rel="stylesheet" href="css/style.css"/> 
+		<script src="js/konva.min.js"></script>
+     <!--[if IE]><!-->
+			<script type="text/javascript">
+				function recargar(){				
+					document.location.reload(true);				
+				}
+				window.onresize = recargar
+			</script>
+			<!--<![endif]-->
+			
+			<!--[if !IE]><!-->
+				<script type="text/javascript">
+				function recargar(){				
+					/*document.location.reload(true);*/
+					document.location.replace(document.URL);
+				}
+				window.onresize = recargar
+			</script>
+			<!--<![endif]-->
+	</head>
+    
+    <body onbeforeunload="ConfirmClose()">    
+    	<div id="ficha"><img id="alpha" src="img/escenario.png" /></div>
+   		<div id="image"><img id="escenario" src="img/tablero.png" /></div>   
+		<div id="container"></div> 
+        
+		<script defer>
+					
+		
+			function loadImages(sources, callback) {
+				var assetDir = 'img/';
+        		var images = {};
+        		var loadedImages = 0;
+        		var numImages = 0;
+				
+        		for(var src in sources) {
+          			numImages++;
+        		}
+				
+        		for(var src in sources) {
+          			images[src] = new Image();
+          			images[src].onload =
+					function() {
+						if(++loadedImages >= numImages) {
+							callback(images);
+            			}
+          			};
+					
+          			images[src].src = assetDir + sources[src];
+        		}
+      		}//Fin de la función
+			
+      		function buildStage(images) {
+				
+				//cogemos el ancho de la imagen de escenario
+				ancho_esce	= document.getElementById('escenario').width;
+				alto_esce	= document.getElementById('escenario').height;
+				
+				//ancho y alto de la imagen
+				var ancho	= document.getElementById('alpha').width;
+				var alto	= 0;				
+				
+				//variable para definir la posición en el eje x del escenario
+				var pos_g	= poscartela + (ancho*2) - ancho/3.7; 
+							
+				var n_fichas=9;
+				var zoom_ini=4;
+				var zoom_fin=1;
+				var posfichas = [stage.getWidth()*.34,stage.getWidth()*.41,stage.getWidth()*.48,stage.getWidth()*.55,stage.getWidth()*.62,stage.getWidth()*.69];
+				var jugadores = [null,null,null,null,null,null];
+				var escenario = 
+				new Konva.Image({
+					image: images.escenario,
+					width: stage.getWidth(),
+					height: alto_esce*stage.getWidth()/ancho_esce,
+					x: 0,
+					y: (stage.getHeight()/2) - (alto_esce/2)					
+				});//Fin función Konva
+				
+				
+				
+				var fondo =
+					new Konva.Image({
+						image: images.fondo,
+						width: ancho_esce*1.8,
+    					height: alto_esce*1.8,
+						x: (stage.getWidth()/1.8/2) - (ancho_esce/2),
+						y: 0,	
+        			});//Fin función Konva	
+				
+				var planeta =
+					new Konva.Image({
+						image: images.planeta,
+						width: ancho_esce*1.2,
+    					height: alto_esce*1.2,
+						x: (stage.getWidth()/1.2/2) - (ancho_esce/2),
+						y: stage.getHeight()*.05,						
+        			});//Fin función Konva	
+					
+				var pantalla = 
+					new Konva.Image({
+						image: images.pantalla,
+						width: ancho_esce,
+    					height: alto_esce,
+						x: (stage.getWidth()/2)*0.85 - (ancho_esce/2),
+						y: 0					
+        			});//Fin función Konva		
+					
+				
+				
+        		var titulo = 
+					new Konva.Image({
+						image: images.titulo,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.02,
+						y: stage.getHeight()*.02
+        			});//Fin función Konva
+				
+				var cartela = 
+					new Konva.Image({
+						image: images.cartela,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.498,
+						y: stage.getHeight()*-.08
+        			});//Fin función Konva
+				
+				var cuantos = 
+					new Konva.Image({
+						image: images.cuantos,
+						width: ancho_esce/3.5,
+    					height: alto_esce/3.5,
+						x: stage.getWidth()*.515,
+						y: stage.getHeight()*-.23
+        			});//Fin función Konva
+
+				var personaje01 = 
+					new Konva.Image({
+						image: images.personaje01,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.80,
+						y: stage.getHeight()*.60
+        			});//Fin función Konva
+				
+				var personaje02 = 
+					new Konva.Image({
+						image: images.personaje02,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.01,
+						y: stage.getHeight()*.53
+        			});//Fin función Konva				
+				
+				var personaje03 = 
+					new Konva.Image({
+						image: images.personaje03,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.01,
+						y: stage.getHeight()*.2
+        			});//Fin función Konva
+				
+				var personaje04 = 
+					new Konva.Image({
+						image: images.personaje04,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.7,
+						y: stage.getHeight()*.3
+        			});//Fin función Konva	
+				
+				var portafichas = 
+					new Konva.Image({
+						image: images.portafichas,
+						width: ancho_esce*0.75,
+    					height: alto_esce*0.75,
+						x: stage.getWidth()*.25,
+						y: stage.getHeight()*.75
+        			});//Fin función Konva	
+
+				var zoom_ficha=10;
+				var ficha01 = 
+					new Konva.Image({
+						image: images.ficha01,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: posfichas[0],
+						y: stage.getHeight()*.87,
+						shadowColor: 'red',
+						shadowBlur: 100,
+						shadowOffset: 0,
+						shadowOpacity: 0,
+						draggable:true,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+
+				var ficha02 =
+					new Konva.Image({
+						image: images.ficha02,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: posfichas[1],
+						y: stage.getHeight()*.87,
+						shadowColor: 'magenta',
+						shadowBlur: 100,
+						shadowOffset: 0,
+						shadowOpacity: 0,
+						draggable:true,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+				
+				
+				var ficha03 =
+					new Konva.Image({
+						image: images.ficha03,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: posfichas[2],
+						y: stage.getHeight()*.87,
+						shadowColor: 'yellow',
+						shadowBlur: 100,
+						shadowOffset: 0,
+						shadowOpacity: 0,
+						draggable:true,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+
+				
+				var ficha04 =
+					new Konva.Image({
+						image: images.ficha04,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: posfichas[3],
+						y: stage.getHeight()*.87,
+						shadowColor: 'green',
+						shadowBlur: 100,
+						shadowOffset: 0,
+						shadowOpacity: 0,
+						draggable:true,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+					
+					var ficha05 =
+					new Konva.Image({
+						image: images.ficha05,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: posfichas[4],
+						y: stage.getHeight()*.87,
+						shadowColor: 'violet',
+						shadowBlur: 100,
+						shadowOffset: 0,
+						shadowOpacity: 0,
+						draggable:true,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+				
+					var ficha06 =
+					new Konva.Image({
+						image: images.ficha06,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: posfichas[5],
+						y: stage.getHeight()*.87,
+						shadowColor: 'cyan',
+						shadowBlur: 100,
+						shadowOffset: 0,
+						shadowOpacity: 0,
+						draggable:true,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+					
+				
+				var target01 = 
+					new Konva.Image({
+						image: images.target,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: stage.getWidth()*.36,
+						y: stage.getHeight()*.27,						
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+
+				var target02 = 
+					new Konva.Image({
+						image: images.target,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: stage.getWidth()*.51,
+						y: stage.getHeight()*.27,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+				
+				
+				var target03 = 
+					new Konva.Image({
+						image: images.target,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: stage.getWidth()*.66,
+						y: stage.getHeight()*.27,								
+						visible: false,
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+
+				
+				var target04 = 
+					new Konva.Image({						
+						image: images.target,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: stage.getWidth()*.36,
+						y: stage.getHeight()*.5,						
+						visible: false,
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+					
+				var target05 = 
+					new Konva.Image({
+						image: images.target,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: stage.getWidth()*.51,
+						y: stage.getHeight()*.5,	
+						visible: false,
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+				
+				var target06 = 
+					new Konva.Image({
+						image: images.target,
+						width: ancho_esce/zoom_ficha,
+    					height: alto_esce/zoom_ficha,
+						x: stage.getWidth()*.66,
+						y: stage.getHeight()*.5,	
+						visible: false,
+						shadowColor: 'black',						
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva		
+			
+				
+				
+				
+				var num_mas = 
+					new Konva.Image({
+						image: images.num_mas,
+						width: ancho_esce/9,
+    					height: alto_esce/9,
+						x: stage.getWidth()*.680,
+						y: stage.getHeight()*.05,												
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+				
+				var num_menos = 
+					new Konva.Image({
+						image: images.num_menos,
+						width: ancho_esce/9,
+    					height: alto_esce/9,
+						x: stage.getWidth()*.557,
+						y: stage.getHeight()*.05,												
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+				
+				var num = 
+					new Konva.Image({
+						image: images.num02,
+						width: ancho_esce/9,
+    					height: alto_esce/9,
+						x: stage.getWidth()*.62,
+						y: stage.getHeight()*.05,												
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+
+				var logo1 = 
+					new Konva.Image({
+						image: images.logo1,
+						width: ancho_esce/5,
+    					height: alto_esce/5,
+						x: stage.getWidth()*.12,
+						y: stage.getHeight()*.82,												
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+				
+				var logo2 = 
+					new Konva.Image({
+						image: images.logo2,
+						width: ancho_esce/5,
+    					height: alto_esce/5,
+						x: stage.getWidth()*.86,
+						y: stage.getHeight()*.82,												
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+
+
+				var jugador01 = 
+					new Konva.Image({
+						image: images.jugador01,
+						width: ancho_esce/4.5,
+    					height: alto_esce/4.5,
+						x: stage.getWidth()*.32,
+						y: stage.getHeight()*.20,
+						shadowColor: 'black',						
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+
+				var jugador02 = 				
+					new Konva.Image({
+						image: images.jugador02,
+						width: ancho_esce/4.5,
+    					height: alto_esce/4.5,
+						x: stage.getWidth()*.47,
+						y: stage.getHeight()*.20,						
+						shadowColor: 'black',						
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+
+				var jugador03 = 				
+					new Konva.Image({
+						image: images.jugador03,
+						width: ancho_esce/4.5,
+    					height: alto_esce/4.5,
+						x: stage.getWidth()*.62,
+						y: stage.getHeight()*.20,
+						visible: false,
+						shadowColor: 'black',						
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+
+				var jugador04 = 				
+					new Konva.Image({
+						image: images.jugador04,
+						width: ancho_esce/4.5,
+    					height: alto_esce/4.5,
+						x: stage.getWidth()*.32,
+						y: stage.getHeight()*.43,
+						visible: false,
+						shadowColor: 'black',						
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+
+				var jugador05 = 				
+					new Konva.Image({
+						image: images.jugador05,
+						width: ancho_esce/4.5,
+    					height: alto_esce/4.5,
+						x: stage.getWidth()*.47,
+						y: stage.getHeight()*.43,
+						visible: false,
+						shadowColor: 'black',						
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+
+				var jugador06 = 				
+					new Konva.Image({
+						image: images.jugador06,
+						width: ancho_esce/4.5,
+    					height: alto_esce/4.5,
+						x: stage.getWidth()*.62,
+						y: stage.getHeight()*.43,
+						visible: false,
+						shadowColor: 'black',						
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+				
+				var btn_comenzar = 				
+					new Konva.Image({
+						image: images.btn_comenzar,
+						width: ancho_esce/6,
+    					height: alto_esce/6,
+						x: stage.getWidth()*.49,
+						y: stage.getHeight()*.62,
+						shadowColor: 'black',						
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+				
+					
+
+		 		var poscartela = 10;
+				 
+				//IMAGEN 1
+				ficha01.on('dragstart touchstart',function() {this.setShadowOpacity(1);this.moveToTop();layer.draw();});					
+				ficha01.on('dragend touchend',function() {					
+						if(haveIntersection( target01,ficha01)){							
+							ficha01.to({ x: target01.getX(), y: target01.getY(), duration: 0.1 });
+							color_jugador01=1;
+						}
+						if(haveIntersection( target02,ficha01)){							
+							ficha01.to({ x: target02.getX(), y: target02.getY(), duration: 0.1 });
+							color_jugador01=2;
+						}
+						if(haveIntersection( target03,ficha01)){							
+							ficha01.to({ x: target03.getX(), y: target03.getY(), duration: 0.1 });
+							color_jugador01=3;
+						}
+						if(haveIntersection( target04,ficha01)){							
+							ficha01.to({ x: target04.getX(), y: target04.getY(), duration: 0.1 });
+							color_jugador01=4;
+						}
+						if(haveIntersection( target05,ficha01)){							
+							ficha01.to({ x: target05.getX(), y: target05.getY(), duration: 0.1 });
+							color_jugador01=5;
+						}
+						if(haveIntersection( target06,ficha01)){							
+							ficha01.to({ x: target06.getX(), y: target06.getY(), duration: 0.1 });
+							color_jugador01=6;
+						}
+						//La ficha roja está en la posición color_jugador01
+						jugadores[color_jugador01-1]=1;
+						this.setShadowOpacity(0);layer.draw();
+					});	
+		
+				//IMAGEN 2
+				ficha02.on('dragstart ',function() {this.setShadowOpacity(1);this.moveToTop();layer.draw();});					
+				ficha02.on('dragend',function() {					
+						if(haveIntersection( target01,ficha02)){							
+							ficha02.to({ x: target01.getX(), y: target01.getY(), duration: 0.1 });
+							color_jugador02=1;
+						}
+						if(haveIntersection( target02,ficha02)){							
+							ficha02.to({ x: target02.getX(), y: target02.getY(), duration: 0.1 });
+							color_jugador02=2;
+						}
+						if(haveIntersection( target03,ficha02)){							
+							ficha02.to({ x: target03.getX(), y: target03.getY(), duration: 0.1 });
+							color_jugador02=3;
+						}
+						if(haveIntersection( target04,ficha02)){							
+							ficha02.to({ x: target04.getX(), y: target04.getY(), duration: 0.1 });
+							color_jugador02=4;
+						}
+						if(haveIntersection( target05,ficha02)){							
+							ficha02.to({ x: target05.getX(), y: target05.getY(), duration: 0.1 });
+							color_jugador02=5;
+						}
+						if(haveIntersection( target06,ficha02)){							
+							ficha02.to({ x: target06.getX(), y: target06.getY(), duration: 0.1 });
+							color_jugador02=6;
+						}
+						jugadores[color_jugador02-1]=2;
+						this.setShadowOpacity(0);layer.draw();
+					});	
+				
+				//IMAGEN 3
+				ficha03.on('dragstart ',function() {this.setShadowOpacity(1);this.moveToTop();layer.draw();});					
+				ficha03.on('dragend',function() {					
+						if(haveIntersection( target01,ficha03)){							
+							ficha03.to({ x: target01.getX(), y: target01.getY(), duration: 0.1 });
+							color_jugador03=1;
+						}
+						if(haveIntersection( target02,ficha03)){							
+							ficha03.to({ x: target02.getX(), y: target02.getY(), duration: 0.1 });
+							color_jugador03=2;
+						}
+						if(haveIntersection( target03,ficha03)){							
+							ficha03.to({ x: target03.getX(), y: target03.getY(), duration: 0.1 });
+							color_jugador03=3;
+						}
+						if(haveIntersection( target04,ficha03)){							
+							ficha03.to({ x: target04.getX(), y: target04.getY(), duration: 0.1 });
+							color_jugador03=4;
+						}
+						if(haveIntersection( target05,ficha03)){							
+							ficha03.to({ x: target05.getX(), y: target05.getY(), duration: 0.1 });
+							color_jugador03=5;
+						}
+						if(haveIntersection( target06,ficha03)){							
+							ficha03.to({ x: target06.getX(), y: target06.getY(), duration: 0.1 });
+							color_jugador03=6;
+						}
+						jugadores[color_jugador03-1]=3;
+						this.setShadowOpacity(0);layer.draw();
+					});	
+		
+				//IMAGEN 4
+				ficha04.on('dragstart ',function() {this.setShadowOpacity(1);this.moveToTop();layer.draw();});					
+				ficha04.on('dragend',function() {					
+						if(haveIntersection( target01,ficha04)){							
+							ficha04.to({ x: target01.getX(), y: target01.getY(), duration: 0.1 });
+							color_jugador04=1;
+						}
+						if(haveIntersection( target02,ficha04)){							
+							ficha04.to({ x: target02.getX(), y: target02.getY(), duration: 0.1 });
+							color_jugador04=2;
+						}
+						if(haveIntersection( target03,ficha04)){							
+							ficha04.to({ x: target03.getX(), y: target03.getY(), duration: 0.1 });
+							color_jugador04=3;
+						}
+						if(haveIntersection( target04,ficha04)){							
+							ficha04.to({ x: target04.getX(), y: target04.getY(), duration: 0.1 });
+							color_jugador04=4;
+						}
+						if(haveIntersection( target05,ficha04)){							
+							ficha04.to({ x: target05.getX(), y: target05.getY(), duration: 0.1 });
+							color_jugador04=5;
+						}
+						if(haveIntersection( target06,ficha04)){							
+							ficha04.to({ x: target06.getX(), y: target06.getY(), duration: 0.1 });
+							color_jugador04=6;
+						}
+						jugadores[color_jugador04-1]=4;
+						this.setShadowOpacity(0);layer.draw();
+					});		
+				
+				//IMAGEN 5
+				ficha05.on('dragstart ',function() {this.setShadowOpacity(1);this.moveToTop();layer.draw();});					
+				ficha05.on('dragend',function() {					
+						if(haveIntersection( target01,ficha05)){							
+							ficha05.to({ x: target01.getX(), y: target01.getY(), duration: 0.1 });
+							color_jugador05=1;
+						}
+						if(haveIntersection( target02,ficha05)){							
+							ficha05.to({ x: target02.getX(), y: target02.getY(), duration: 0.1 });
+							color_jugador05=2;
+						}
+						if(haveIntersection( target03,ficha05)){							
+							ficha05.to({ x: target03.getX(), y: target03.getY(), duration: 0.1 });
+							color_jugador05=3;
+						}
+						if(haveIntersection( target04,ficha05)){							
+							ficha05.to({ x: target04.getX(), y: target04.getY(), duration: 0.1 });
+							color_jugador05=4;
+						}
+						if(haveIntersection( target05,ficha05)){							
+							ficha05.to({ x: target05.getX(), y: target05.getY(), duration: 0.1 });
+							color_jugador05=5;
+						}
+						if(haveIntersection( target06,ficha05)){							
+							ficha05.to({ x: target06.getX(), y: target06.getY(), duration: 0.1 });
+							color_jugador05=6;
+						}
+						jugadores[color_jugador05-1]=5;
+						this.setShadowOpacity(0);layer.draw();
+					});	
+				
+				//IMAGEN 6
+				ficha06.on('dragstart ',function() {this.setShadowOpacity(1);this.moveToTop();layer.draw();});					
+				ficha06.on('dragend',function() {					
+						if(haveIntersection( target01,ficha06)){							
+							ficha06.to({ x: target01.getX(), y: target01.getY(), duration: 0.1 });
+							color_jugador06=1;
+						}
+						if(haveIntersection( target02,ficha06)){							
+							ficha06.to({ x: target02.getX(), y: target02.getY(), duration: 0.1 });
+							color_jugador06=2;
+						}
+						if(haveIntersection( target03,ficha06)){							
+							ficha06.to({ x: target03.getX(), y: target03.getY(), duration: 0.1 });
+							color_jugador06=3;
+						}
+						if(haveIntersection( target04,ficha06)){							
+							ficha06.to({ x: target04.getX(), y: target04.getY(), duration: 0.1 });
+							color_jugador06=4;
+						}
+						if(haveIntersection( target05,ficha06)){							
+							ficha06.to({ x: target05.getX(), y: target05.getY(), duration: 0.1 });
+							color_jugador06=5;
+						}
+						if(haveIntersection( target06,ficha06)){							
+							ficha06.to({ x: target06.getX(), y: target06.getY(), duration: 0.1 });
+							color_jugador06=6;
+						}
+						jugadores[color_jugador06-1]=6;
+						this.setShadowOpacity(0);layer.draw();
+					});	
+
+				function getNum(){					
+					return parseInt(num.getImage().src.slice(-5).charAt(0));
+				}
+				
+				function setNum(i){
+					num.setImage(eval("images.num0"+i));					
+				}
+				
+				num_mas.on('mousedown tap',function() {						
+					newNum=getNum();
+					if(newNum<6){
+						newNum++;
+						setNum(newNum);						
+					} 						
+					reordenaFichas(newNum);
+					
+				});
+
+				
+				num_menos.on('mousedown tap',function() {					
+					newNum=getNum();
+					if(newNum>2){
+						newNum--;
+						setNum(newNum);	
+					} 					
+					reordenaFichas(newNum);					
+				});
+				
+				function reordenaFichas(newNum){					
+					for(i=1;i<=newNum;i++){
+						eval("jugador0"+i).setVisible(1);
+						eval("target0"+i).setVisible(1);
+					}
+					for(i=newNum+1;i<=6;i++){
+						eval("jugador0"+i).setVisible(0);
+						eval("target0"+i).setVisible(0);
+						if( jugadores[i-1] != null ){
+							//alert("Muevo el jugador "+"ficha0"+jugadores[i-1]+" a "+posfichas[i-1]);
+							eval("ficha0"+jugadores[i-1]).to({ x: posfichas[jugadores[i-1]-1], y: stage.getHeight()*.87, duration: 0.2 });
+							
+							jugadores[i-1]=null;
+						}
+					}
+				}
+				
+				btn_comenzar.on('mousedown tap',function() {					
+					var correcto=true;
+					for(i=0;i<getNum();i++){
+						if(jugadores[i]==null){
+							correcto=false;
+						}
+					}
+					if(correcto==false){
+						alert("Debes asignar un color a cada jugador");
+					}
+					else{
+						window.location.href = "juegox.html?num="+getNum()+"&jugador1="+jugadores[0]+"&jugador2="+jugadores[1]+"&jugador3="+jugadores[2]+"&jugador4="+jugadores[3]+"&jugador5="+jugadores[4]+"&jugador6="+jugadores[5];
+					}
+					
+				});
+
+				//AÑADIR IMAGENES
+				
+				layer.add(escenario);
+				layer.add(pantalla);
+				layer.add(fondo);
+				layer.add(planeta);	
+				layer.add(titulo);							
+				layer.add(personaje01);
+				layer.add(personaje02);
+				layer.add(personaje03);
+				layer.add(personaje04);
+				layer.add(portafichas);
+				layer.add(cartela);	
+				layer.add(cuantos);
+				layer.add(logo1);
+				layer.add(logo2);
+				layer.add(jugador01);
+				layer.add(jugador02);
+				layer.add(jugador03);
+				layer.add(jugador04);
+				layer.add(jugador05);
+				layer.add(jugador06);	
+				layer.add(target01);
+				layer.add(target02);
+				layer.add(target03);
+				layer.add(target04);
+				layer.add(target05);
+				layer.add(target06);
+				layer.add(ficha01);
+				layer.add(ficha02);
+				layer.add(ficha03);
+				layer.add(ficha04);
+				layer.add(ficha05);
+				layer.add(ficha06);
+				layer.add(num_mas);
+				layer.add(num_menos);
+				layer.add(num);				
+				layer.add(btn_comenzar);
+								
+							
+				stage.add(layer);		
+				
+				function haveIntersection(magneto, elemento) {				
+					return !(
+					elemento.getX() > magneto.getX() + magneto.getWidth()/2 ||
+					elemento.getX() + elemento.getWidth()/2 < magneto.getX() ||
+					elemento.getY() > magneto.getY() + magneto.getHeight()/2 ||
+					elemento.getY() + elemento.getHeight()/2 < magneto.getY()
+					);
+			  	}
+				
+				//CÓDIGO PARA HACER EL HOVER A LAS IMAGENES		
+				var tween1 = new Konva.Tween({node: ficha01, duration: 0.2, shadowBlur: 20, scaleX:zoom_fin, scaleY:zoom_fin, easing: Konva.Easings.BackEaseInOut});					
+				var tween2 = new Konva.Tween({node: ficha02, duration: 0.2, shadowBlur: 20, scaleX:zoom_fin, scaleY:zoom_fin, easing: Konva.Easings.BackEaseInOut});
+				var tween3 = new Konva.Tween({node: ficha03, duration: 0.2, shadowBlur: 20, scaleX:zoom_fin, scaleY:zoom_fin, easing: Konva.Easings.BackEaseInOut});
+				var tween4 = new Konva.Tween({node: ficha04, duration: 0.2, shadowBlur: 20, scaleX:zoom_fin, scaleY:zoom_fin, easing: Konva.Easings.BackEaseInOut});			
+				var tween5 = new Konva.Tween({node: ficha05, duration: 0.2, shadowBlur: 20, scaleX:zoom_fin, scaleY:zoom_fin, easing: Konva.Easings.BackEaseInOut});
+				var tween6 = new Konva.Tween({node: ficha06, duration: 0.2, shadowBlur: 20, scaleX:zoom_fin, scaleY:zoom_fin, easing: Konva.Easings.BackEaseInOut});			
+						
+      		}//Fin de la función buildStage	  
+			
+			
+			//CREAR EL CONTAINER
+			var stage = new Konva.Stage({
+				container: 'container',
+				width: window.innerWidth,
+				height: window.innerHeight,
+			});
+
+      		var layer = new Konva.Layer();
+       
+			
+			
+			
+	   		//INCLUIR LAS IMAGENES
+			var sources = {
+				ficha01: "ficha01.png",
+				ficha02: "ficha02.png",
+				ficha03: "ficha03.png",
+				ficha04: "ficha04.png",							
+				ficha05: "ficha05.png",
+				ficha06: "ficha06.png",
+				target: "fichatarget.png",
+				portafichas: "portafichas.png",		
+				escenario: 	'escenario.png',
+				cartela: 	'cartela.png',
+				cuantos: 	'cuantos.png',
+				personaje01:	'personaje01.png',
+				personaje02: 	'personaje02.png',
+				personaje03: 	'personaje03.png',
+				personaje04: 	'personaje04.png',
+				num_mas: 	'num_mas.png',
+				num_menos: 	'num_menos.png',
+				logo1: 	'logo1.png',
+				logo2: 	'logo2.png',
+				num01: 	'num01.png',
+				num02: 	'num02.png',
+				num03: 	'num03.png',
+				num04: 	'num04.png',
+				num05: 	'num05.png',
+				num06: 	'num06.png',
+				jugador01: 	'jugador01.png',
+				jugador02: 	'jugador02.png',
+				jugador03: 	'jugador03.png',
+				jugador04: 	'jugador04.png',
+				jugador05: 	'jugador05.png',
+				jugador06: 	'jugador06.png',				
+				btn_comenzar: 	'btn_comenzar.png',	
+				titulo: 	'titulo.png',
+				planeta: 	'planeta.png',				
+				pantalla: 	'pantalla.png',
+				fondo: 	'fondo.png'				
+			};
+	   		//CARGAR LAS FUNCIONES
+      		loadImages(sources, buildStage);			
+        </script>
+    </body>
+</html>

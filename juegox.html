@@ -1,0 +1,1385 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<link rel="stylesheet" href="css/style.css"/> 
+		<script src="js/konva.min.js"></script>
+		<!--[if IE]><!-->
+			<script type="text/javascript">
+				function recargar(){				
+					document.location.reload(true);				
+				}
+				window.onresize = recargar
+			</script>
+			<!--<![endif]-->
+			
+			<!--[if !IE]><!-->
+				<script type="text/javascript">
+				function recargar(){				
+					/*document.location.reload(true);*/
+					document.location.replace(document.URL);
+				}
+				window.onresize = recargar
+			</script>
+			<!--<![endif]-->
+    </head>
+    
+    <body onbeforeunload="ConfirmClose()">    
+    	<div id="elemento"><img id="alpha" src="img/escenario.png" /></div>
+   		<div id="image"><img id="escenario" src="img/tablero.png" /></div>   
+		<div id="container"></div> 
+        
+		<script defer>
+					
+
+			const opinionQuestion = {
+				"0":[ //green
+					{ question: "¿Qué actividades o prácticas nuevas deberíamos intentar en el equipo?", points: 10},
+					{ question: "¿Qué nuevas habilidades o conocimientos podríamos adquirir para mejorar nuestro trabajo?", points: 6},
+					{ question: "¿Qué procesos podríamos automatizar o simplificar para ser más eficientes?", points: 8}
+				],
+				"1":[ //yellow
+					{ question: "¿Qué actividades o prácticas están funcionando bien en el equipo y deberíamos hacer más a menudo?", points: 4},
+					{ question: "¿Qué habilidades o conocimientos tenemos en el equipo que podríamos aprovechar más?", points: 4},
+					{ question: "¿Qué aspectos de nuestra cultura o valores nos gustaría ver más reflejados en nuestro trabajo diario?", points: 8}
+				],
+				"2":[ //blue
+					{ question: "¿Qué actividades o prácticas estamos haciendo bien y deberíamos seguir haciendo?", points: 4},
+					{ question: "¿Qué habilidades o conocimientos están siendo útiles en nuestro trabajo y deberíamos seguir desarrollando?", points: 4},
+					{ question: "¿Qué aspectos de nuestra cultura o valores estamos reflejando en nuestro trabajo y deberíamos seguir fomentando?", points: 8}
+				],
+				"3":[  //orange
+					{ question: "¿Qué actividades o prácticas están consumiendo mucho tiempo o energía y deberíamos reducir?", points: 8},
+					{ question: "¿Qué habilidades o conocimientos están siendo menos útiles en nuestro trabajo y deberíamos dejar de enfatizar?", points: 8},
+					{ question: "¿Qué aspectos de nuestra cultura o valores están siendo menos efectivos en nuestro trabajo y deberíamos cambiar?", points: 8}
+				],
+				"4":[ //red
+					{ question: "¿Qué actividades o prácticas no están funcionando bien en el equipo y deberíamos dejar de hacer?", points: 10},
+					{ question: "¿Qué habilidades o conocimientos no están siendo útiles en nuestro trabajo y deberíamos dejar de enfatizar?", points: 10},
+					{ question: "¿Qué aspectos de nuestra cultura o valores están siendo contraproducentes en nuestro trabajo y deberíamos cambiar radicalmente?", points: 10}
+				]
+			};
+
+			const duelQuestions = [
+				{
+					question: "¿Qué significa la sigla SQL?",
+					options: ["Structured Query Language", "Simple Query Language", "Standard Query Language", "Super Query Language"],
+					answer: 0,
+				},
+				{
+					question: "¿Qué lenguaje de programación fue creado por Guido van Rossum en los años 90?",
+					options: ["Java", "Python", "Ruby", "C#"],
+					answer: 1,
+				},
+				{
+					question: "¿Qué es un \"shell\" en sistemas operativos Unix y Unix-like?",
+					options: ["Un programa para realizar búsquedas en el sistema de archivos.", "Un programa para ejecutar comandos y scripts.", "Una interfaz gráfica para el sistema operativo", "Un programa para gestionar la memoria del sistema."],
+					answer: 1,
+				},
+				{
+					question: "¿Cuál de las siguientes ciudades es la capital de Australia?",
+					options: ["Melbourne", "Canberra", "Sydney", "Brisbane"],
+					answer: 1,
+				},
+				{
+					question: "¿Cuál es el nombre del famoso personaje de ficción creado por Sir Arthur Conan Doyle?",
+					options: ["James Bond", "Sherlock Holmes", "Jack Reacher", "Hercule Poirot"],
+					answer: 1,
+				},
+				{
+					question: "¿Qué significa la sigla CSS?",
+					options: ["Cascading Style Sheets", "Custom Style Sheets", "Client-Side Styling", "Computer Style Sheets"],
+					answer: 0,
+				},
+				{
+					question: "¿Qué es un \"hash\" en programación?",
+					options: ["Una función matemática que convierte datos en un valor único y fijo.", "Una función que calcula la media de un conjunto de datos.", "Un tipo de estructura de datos que almacena información de forma ordenada.", "Un algoritmo que se utiliza para cifrar datos."],
+					answer: 0,
+				},
+				{
+					question: "¿Cuál de las siguientes opciones es un lenguaje de programación de alto nivel? ",
+					options: ["Ensamblador", "Python", "C", "C++"],
+					answer: 1,
+				},
+				{
+					question: "¿Qué es un \"bug\" en programación?",
+					options: ["Un error en el código que produce un comportamiento no deseado.", "Un tipo de animal que puede interferir con la programación.", "Una herramienta para depurar código.", "Un compañero de trabajo que puede interferir con la programación."],
+					answer: 0,
+				},
+				{
+					question: "¿Cuál es el protocolo de transferencia de hipertexto utilizado en la World Wide Web?",
+					options: ["HTTPS", "SMTP", "FTP", "HTTP"],
+					answer: 3,
+				},
+				{
+					question: "¿Qué es una \"API\" en programación?",
+					options: ["Una interfaz gráfica de usuario.", "Un conjunto de funciones y procedimientos que se pueden utilizar para acceder a un software o hardware.", "Un sistema para el control de versiones de código.", "Una técnica de optimización de código."],
+					answer: 1,
+				},
+				{
+					question: "¿Qué es un \"framework\" en programación?",
+					options: ["Una estructura de datos que organiza información de forma jerárquica.", "Un conjunto de herramientas y bibliotecas que facilitan el desarrollo de aplicaciones.", "Una técnica de programación para asegurar la calidad del código.", "Una técnica de optimización de código."],
+					answer: 1,
+				},
+				{
+					question: "¿Cuál es el pintor más famoso del Renacimiento italiano?",
+					options: ["Miguel Ángel", "Leonardo da Vinci", "Sandro Botticelli", "Rafael Sanzio"],
+					answer: 1,
+				},
+				{
+					question: "¿Quién escribió la novela \"Cien años de soledad\"?",
+					options: ["Pablo Neruda", "Gabriel García Márquez", "Julio Cortázar", "Mario Vargas Llosa"],
+					answer: 1,
+				},
+				{
+					question: "¿Cuál es la capital de Canadá?",
+					options: ["Toronto", "Vancouver", "Montreal", "Ottawa"],
+					answer: 3,
+				}
+			];
+
+
+			function loadImages(sources, callback) {
+				var assetDir = 'img/';
+        		var images = {};
+        		var loadedImages = 0;
+        		var numImages = 0;
+				
+        		for(var src in sources) {
+          			numImages++;
+        		}
+				
+        		for(var src in sources) {
+          			images[src] = new Image();
+          			images[src].onload =
+					function() {
+						if(++loadedImages >= numImages) {
+							callback(images);
+            			}
+          			};
+					
+          			images[src].src = assetDir + sources[src];
+        		}
+      		}//Fin de la función
+			
+      		function buildStage(images) {
+				
+				//cogemos el ancho de la imagen de escenario
+				ancho_esce	= document.getElementById('escenario').width;
+				alto_esce	= document.getElementById('escenario').height;
+				
+				//ancho y alto de la imagen
+				var ancho	= document.getElementById('alpha').width;
+				var alto	= 0;				
+				
+				//variable para definir la posición en el eje x del escenario
+				var pos_g	= poscartela + (ancho*2) - ancho/3.7; 
+							
+				var n_elementos=9;
+				var zoom_ini=4;
+				var zoom_fin=1;
+				var escenario = 
+				new Konva.Image({
+					image: images.escenario,
+					width: stage.getWidth(),
+					height: alto_esce*stage.getWidth()/ancho_esce,
+					x: 0,
+					y: (stage.getHeight()/2) - (alto_esce/2)					
+				});//Fin función Konva
+				
+				//+ 23 x
+				//+ 53 y
+				
+				//Noramles
+				//x 47
+				//y 52
+				var type_magnetos = [1,1,1,1,4,3,3,3,3,3,3,3,5,2,2,2,2,2,2,2,6,1,1,1,1,1,1,1,7,3,3,3,3,3,3,3,8,2,2,2,2,2,2,2,9,1,1,1,1,1,4,3,3,3,5,2,2,2,6,1,1,1,7,3,3,3,8,2,2,2,9,1];
+				var total = type_magnetos.length;
+				var pos_magnetos = [
+					[592.5, 28.1],[615.5, 083],[639, 137],[662, 190],
+					[702, 238],							
+					[742, 251],[788, 251],[834, 251],[880, 251],[856, 307],[832, 361],[809, 414],
+					[794.5, 466.8],							
+					[812, 522],[834, 573],[856, 623],[881, 678],[834, 678],[788, 678],[743, 678],
+					[702, 692],							
+					[662, 720],[639, 772],[616, 826],[593, 881],[568, 826],[545, 772],[522, 720],
+					[504, 690],							
+					[462, 677],[416, 677],[370, 677],[325, 677],[349, 622],[372, 570],[395, 516],
+					[410, 465],							
+					[395, 412],[372, 359],[349, 305],[325, 251],[374, 251],[420, 251],[467, 251],
+					[505, 238],							
+					[523, 189.5],[546, 135.5],[569, 083],[592.5, 242],[615.5, 297.5],
+					[655, 345],								
+					[694, 359],[741, 359],[718, 412],
+					[699, 466],						
+					[717.5, 518],[741, 570],[694, 570],
+					[655, 581],							
+					[615.5,612 ],[592, 667],[569, 612.5],
+					[551, 581],					
+					[512, 570],[465, 570],[487, 518],
+					[507, 466],							
+					[489, 412],[465, 359],[513, 359],
+					[551, 347],							
+					[569, 296]
+				];
+
+				var audioDado = new Audio('mp3/dado.mp3');
+				var audioFicha = new Audio('mp3/ficha.mp3');
+				var audioMundo = new Audio('mp3/mundo.mp3');
+				var audioTurno = new Audio('mp3/turno.mp3');
+				var audioError = new Audio('mp3/error.mp3');
+				var audioFallo = new Audio('mp3/fallo.mp3');
+				var audioExito = new Audio('mp3/exito.mp3');
+				var audios = new Array(audioDado, audioFicha, audioMundo, audioTurno, audioError, audioFallo, audioExito);
+				
+				function stopAllSounds(){
+					for (i = 0; i < audios.length; i++) {					 
+						//audios[i].pause();
+						audios[i].currentTime = 0;
+					} 
+				}
+
+				var fondo =
+					new Konva.Image({
+						image: images.fondo,
+						width: ancho_esce*1.8,
+    					height: alto_esce*1.8,
+						x: (stage.getWidth()/1.8/2) - (ancho_esce/2),
+						y: 0,	
+        			});//Fin función Konva	
+				
+				var planeta =
+					new Konva.Image({
+						image: images.planeta,
+						width: ancho_esce*1.2,
+    					height: alto_esce*1.2,
+						x: (stage.getWidth()/1.2/2) - (ancho_esce/2),
+						y: stage.getHeight()*.05,						
+        			});//Fin función Konva	
+				
+				var cartela = 
+					new Konva.Image({
+						image: images.cartela,
+						width: ancho_esce/3,
+    					height: alto_esce/2.8,
+						x: stage.getWidth()*.71,
+						y: stage.getHeight()*0
+        			});//Fin función Konva	
+					
+				var pantalla = 
+					new Konva.Image({
+						image: images.pantalla,
+						width: ancho_esce,
+    					height: alto_esce,
+						x: (stage.getWidth()/2)*0.85 - (ancho_esce/2),
+						y: 0					
+        			});//Fin función Konva	
+				var texto = new Konva.Text({
+					text: "",
+					fontSize: 25,
+					fontFamily: 'Calibri',
+					fill: 'black',
+					align: 'center',
+					width: ancho_esce/2.7,
+					height: alto_esce/2.5,
+					x: pantalla.getX()+pantalla.getWidth()*.9,
+					y: pantalla.getY()+pantalla.getHeight()*.9,
+					offset: {
+						x: ancho_esce/2,
+						y: alto_esce/2
+					}
+				});
+				var modal0 = 
+					new Konva.Image({
+						image: images.modal0,
+						width: ancho_esce/2.5,
+    					height: alto_esce/2.5,
+						x: pantalla.getX()+pantalla.getWidth()*.9,
+						y: pantalla.getY()+pantalla.getHeight()*.75,
+						offset: {
+							x: ancho_esce/2,
+							y: alto_esce/2
+        				}				
+        			});//Fin función Konva				
+				var modal1 = 
+					new Konva.Image({
+						image: images.modal1,
+						width: ancho_esce/2.5,
+    					height: alto_esce/2.5,
+						x: pantalla.getX()+pantalla.getWidth()*.9,
+						y: pantalla.getY()+pantalla.getHeight()*.75,
+						offset: {
+							x: ancho_esce/2,
+							y: alto_esce/2
+        				}				
+        			});//Fin función Konva
+				var modal2 =
+					new Konva.Image({
+						image: images.modal2,
+						width: ancho_esce/2.5,
+    					height: alto_esce/2.5,
+						x: pantalla.getX()+pantalla.getWidth()*.9,
+						y: pantalla.getY()+pantalla.getHeight()*.75,
+						offset: {
+							x: ancho_esce/2,
+							y: alto_esce/2
+        				}				
+        			});//Fin función Konva
+				var modal3 = 
+					new Konva.Image({
+						image: images.modal3,
+						width: ancho_esce/2.5,
+    					height: alto_esce/2.5,
+						x: pantalla.getX()+pantalla.getWidth()*.9,
+						y: pantalla.getY()+pantalla.getHeight()*.75,
+						offset: {
+							x: ancho_esce/2,
+							y: alto_esce/2
+        				}				
+        			});//Fin función Konva
+				var modal4 = 
+					new Konva.Image({
+						image: images.modal4,
+						width: ancho_esce/2.5,
+    					height: alto_esce/2.5,
+						x: pantalla.getX()+pantalla.getWidth()*.9,
+						y: pantalla.getY()+pantalla.getHeight()*.75,
+						offset: {
+							x: ancho_esce/2,
+							y: alto_esce/2
+        				}				
+        			});//Fin función Konva
+					
+				var si = 
+					new Konva.Image({
+						image: images.si,
+						width: ancho_esce/7,
+    					height: alto_esce/7,
+						x: pantalla.getX()+pantalla.getWidth()*.52,
+						y: pantalla.getY()+pantalla.getHeight()*.58,
+						offset: {
+							x: ancho_esce/6/2,
+							y: alto_esce/6/2
+        				}					
+        			});//Fin función Konva
+				var no = 
+					new Konva.Image({
+						image: images.no,
+						width: ancho_esce/7,
+    					height: alto_esce/7,
+						x: pantalla.getX()+pantalla.getWidth()*.7,
+						y: pantalla.getY()+pantalla.getHeight()*.58,
+						offset: {
+							x: ancho_esce/6/2,
+							y: alto_esce/6/2
+        				}				
+        			});//Fin función Konva
+
+					
+				var tablero = 
+					new Konva.Image({
+						image: images.tablero,
+						width: ancho_esce,
+    					height: alto_esce,
+						x: pantalla.getX()+pantalla.getWidth()*.15,
+						y: pantalla.getY()+pantalla.getHeight()*.01,						
+						opacity: 1,
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}						
+        			});//Fin función Konva			
+				
+        		var titulo = 
+					new Konva.Image({
+						image: images.titulo,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.02,
+						y: stage.getHeight()*.02
+        			});//Fin función Konva
+				
+				var dado = 
+					new Konva.Image({
+						image: images.dado,
+						width: ancho_esce/6,
+    					height: alto_esce/6,
+						x: stage.getWidth()*.814,
+						y: stage.getHeight()*.15,
+						offset: {
+							x: ancho_esce/6/2,
+							y: alto_esce/6/2
+        				}
+        			});//Fin función Konva
+				
+				var personaje01 = 
+					new Konva.Image({
+						image: images.personaje01,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.80,
+						y: stage.getHeight()*.65
+        			});//Fin función Konva
+				
+				var personaje02 = 
+					new Konva.Image({
+						image: images.personaje02,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.01,
+						y: stage.getHeight()*.60
+        			});//Fin función Konva				
+				
+				var personaje03 = 
+					new Konva.Image({
+						image: images.personaje03,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.01,
+						y: stage.getHeight()*.2
+        			});//Fin función Konva
+				
+				var personaje04 = 
+					new Konva.Image({
+						image: images.personaje04,
+						width: ancho_esce/3,
+    					height: alto_esce/3,
+						x: stage.getWidth()*.7,
+						y: stage.getHeight()*.3
+        			});//Fin función Konva	
+					
+				
+				
+
+				var ficha01 = 
+					new Konva.Image({
+						image: images.ficha01,
+						width: ancho_esce/15,
+    					height: alto_esce/15,
+						x: stage.getWidth()*.5,
+						y: stage.getHeight()*.5,					
+						shadowColor: 'black',
+						shadowBlur: 10,
+						shadowOffset: { x: 0, y: 0 },
+						shadowOpacity: 5,
+						draggable:false,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+
+				var ficha02 =
+					new Konva.Image({
+						image: images.ficha02,
+						width: ancho_esce/15,
+    					height: alto_esce/15,
+						x: stage.getWidth()*.5,
+						y: stage.getHeight()*.5,						
+						shadowBlur: 10,
+						shadowOffset: 2,
+						shadowOpacity: 0.1,
+						draggable:false,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+				
+				
+				var ficha03 =
+					new Konva.Image({
+						image: images.ficha03,
+						width: ancho_esce/15,
+    					height: alto_esce/15,
+						x: stage.getWidth()*.5,
+						y: stage.getHeight()*.5,							
+						shadowBlur: 10,
+						shadowOffset: 2,
+						shadowOpacity: 0.1,
+						draggable:false,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+
+				
+				var ficha04 =
+					new Konva.Image({
+						image: images.ficha04,
+						width: ancho_esce/15,
+    					height: alto_esce/15,
+						x: stage.getWidth()*.5,
+						y: stage.getHeight()*.5,	
+						shadowColor: 'black',
+						shadowBlur: 10,
+						shadowOffset: 2,
+						shadowOpacity: 0.1,
+						draggable:false,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva
+					
+				var ficha05 =
+					new Konva.Image({
+						image: images.ficha05,
+						width: ancho_esce/15,
+    					height: alto_esce/15,
+						x: stage.getWidth()*.5,
+						y: stage.getHeight()*.5,	
+						shadowColor: 'black',
+						shadowBlur: 10,
+						shadowOffset: 2,
+						shadowOpacity: 0.1,
+						draggable:false,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+				
+					
+				var ficha06 =
+					new Konva.Image({
+						image: images.ficha06,
+						width: ancho_esce/15,
+    					height: alto_esce/15,
+						x: stage.getWidth()*.5,
+						y: stage.getHeight()*.5,	
+						shadowColor: 'black',
+						shadowBlur: 10,
+						shadowOffset: 2,
+						shadowOpacity: 0.1,
+						draggable:false,	
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+				
+
+				var daoNum = 
+					new Konva.Image({
+						image: images.num01,
+						width: ancho_esce/9,
+    					height: alto_esce/9,
+						x: stage.getWidth()*.77,
+						y: stage.getHeight()*.09,												
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        		});//Fin función Konva	
+				
+			
+				var turnoImg = 
+					new Konva.Image({
+						image: images.turno01,
+						width: ancho_esce/4,
+    					height: alto_esce/4,
+						x: stage.getWidth()*.78,
+						y: stage.getHeight()*-.17,												
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        		});//Fin función Konva
+
+				var turnoColor =
+					new Konva.Image({
+						image: images.ficha01,
+						width: ancho_esce/10,
+    					height: alto_esce/10,
+						x: stage.getWidth()*.90,
+						y: stage.getHeight()*.10,
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+				
+				var nueva =
+					new Konva.Image({
+						image: images.nueva,
+						width: ancho_esce/7,
+    					height: alto_esce/7,
+						x: stage.getWidth()*.85,
+						y: stage.getHeight()*.85,
+						offset: {
+							x: ancho/2,
+							y: alto/2
+        				}
+        			});//Fin función Konva	
+
+				//iluminacion extra				
+				
+				for(k=1;k<=5;k++){
+					for(i=0;i<total;i++){					
+						num = (i<=9) ? "0"+i :i; 
+						t = (i<9) ? "0"+eval(i+1) : eval(i+1); 			
+						zoom = type_magnetos[i]==1 ? 9.2 : 11.2;
+						eval('var ilu'+k+'Extra'+num+'='+ 
+							'new Konva.Image({'+
+								'image:images.magnet'+t+','+
+								'width: ancho_esce/zoom,'+
+								'height: alto_esce/zoom,'+
+								'x: pantalla.getX()+pantalla.getWidth()*pos_magnetos['+i+'][0]/1000,'+
+								'y: pantalla.getY()+pantalla.getHeight()*pos_magnetos['+i+'][1]/1000,'+				
+								'opacity: 1,'+
+								'shadowColor: \'white\','+
+								'shadowBlur: 20,'+								
+								'shadowOpacity: 0,'+
+								'offset: {'+
+								'	x: ancho/2,'+
+								'	y: alto/2'+
+								'}});');								
+					}	
+				}
+				
+				//Magnetos
+
+				const colores = ['green','red','yellow', 'blue']
+				for(i=0;i<total;i++){					
+					num = (i<=9) ? "0"+i :i; 
+					t = (i<9) ? "0"+eval(i+1) : eval(i+1); 			
+					zoom = type_magnetos[i]==1 ? 9.2 : 11.2;
+					eval('var magneto'+num+'='+ 
+						'new Konva.Image({'+
+							'image:images.magnet'+t+','+
+							'width: ancho_esce/zoom,'+
+							'height: alto_esce/zoom,'+
+							'x: pantalla.getX()+pantalla.getWidth()*pos_magnetos['+i+'][0]/1000,'+
+							'y: pantalla.getY()+pantalla.getHeight()*pos_magnetos['+i+'][1]/1000,'+				
+							'opacity: 1,'+
+							'shadowColor: \'white\','+
+							'shadowBlur: 10,'+
+							'shadowOffset: 5,'+
+							'shadowOpacity: 0,'+
+							'offset: {'+
+							'	x: ancho/2,'+
+							'	y: alto/2'+
+							'}});');								
+					}	
+				
+				//Preguntas				
+				for(i=0;i<15;i++){					
+					num = (i<=9) ? "0"+i :i; 
+					t = (i<9) ? "0"+eval(i+1) : eval(i+1); 	
+					eval('var pregunta_'+num+'='+ 
+						'new Konva.Image({'+
+							'image:images.pregunta_'+t+','+
+							'width: ancho_esce/3,'+
+							'height: alto_esce/3,'+
+							'x: pantalla.getX()+pantalla.getWidth()*.5,'+
+							'y: pantalla.getY()+pantalla.getHeight()*.25,'+
+							'offset: {'+
+							'	x: ancho/2,'+
+							'	y: alto/2'+
+							'}});');
+						eval("pregunta_"+num).hide();
+					}
+				
+				
+						
+				
+				//Salidas				
+				for(i=1;i<7;i++){					
+					num = (i<=9) ? "0"+i :i; 
+					t = (i<9) ? "0"+eval(i+1) : eval(i+1); 			
+					zoom = 23;
+					eval('var salida'+num+'='+ 
+						'new Konva.Image({'+
+							'image:images.salida,'+
+							'width: ancho_esce/zoom,'+
+							'height: alto_esce/zoom,'+
+							'x: stage.getWidth()*.5,'+
+							'y: stage.getHeight()*.5,'+										
+							'opacity: 1,'+
+							'shadowColor: \'white\','+
+							'shadowBlur: 10,'+
+							'shadowOffset: 0,'+
+							'shadowOpacity: 0,'+
+							'offset: {'+
+							'	x: ancho*0.5,'+
+							'	y: alto*0.5'+
+							'}});');
+								
+					}	
+				
+
+		 		var poscartela = 10;
+				
+				//FICHA 1
+				ficha01.on('dragstart touchstart ',function() {					
+						this.moveToTop();layer.draw();									
+				});					
+				ficha01.on('dragend touchend',function() {	
+					if(haveIntersection(casilla2,1)){
+						posicionFicha[0]=casilla2;
+						mueveFicha(1,casilla2);						
+					}
+					else{						
+						mueveFicha(1,posicionFicha[0],false,false,true);
+					}																	
+				});	
+				
+				//FICHA 2
+				ficha02.on('dragstart touchstart ',function() {					
+						this.moveToTop();layer.draw();									
+				});					
+				ficha02.on('dragend touchend',function() {						
+					if(haveIntersection(casilla2,2)){
+						posicionFicha[1]=casilla2;
+						mueveFicha(2,casilla2);						
+					}
+					else{						
+						mueveFicha(2,posicionFicha[1],false,false,true);
+					}												
+				});	
+				
+				//FICHA 3
+				ficha03.on('dragstart touchstart ',function() {					
+						this.moveToTop();layer.draw();									
+				});					
+				ficha03.on('dragend touchend',function() {						
+					if(haveIntersection(casilla2,3)){
+						posicionFicha[2]=casilla2;
+						mueveFicha(3,casilla2);						
+					}
+					else{						
+						mueveFicha(3,posicionFicha[2],false,false,true);
+					}												
+				});	
+				
+				//FICHA 4
+				ficha04.on('dragstart touchstart ',function() {					
+						this.moveToTop();layer.draw();									
+				});					
+				ficha04.on('dragend touchend',function() {						
+					if(haveIntersection(casilla2,4)){
+						posicionFicha[3]=casilla2;
+						mueveFicha(4,casilla2);						
+					}
+					else{						
+						mueveFicha(4,posicionFicha[3],false,false,true);
+					}												
+				});	
+
+				//FICHA 5
+				ficha05.on('dragstart touchstart ',function() {					
+						this.moveToTop();layer.draw();									
+				});					
+				ficha05.on('dragend touchend',function() {						
+					if(haveIntersection(casilla2,5)){
+						posicionFicha[4]=casilla2;
+						mueveFicha(5,casilla2);													
+					}
+					else{						
+						mueveFicha(5,posicionFicha[4],false,false,true);
+					}												
+				});	
+
+				//FICHA 6
+				ficha06.on('dragstart touchstart ',function() {					
+						this.moveToTop();layer.draw();									
+				});					
+				ficha06.on('dragend touchend',function() {
+					if(haveIntersection(casilla2,6)){								
+						posicionFicha[5]=casilla2;						
+						mueveFicha(6,casilla2);																				
+					}
+					else{	
+						mueveFicha(6,posicionFicha[5],false,false,true);								
+					}												
+				});	
+
+				nueva.on('mousedown tap',function() {						
+					window.location.href = "Tablero_Galaxia_HASO.html";
+				});	
+
+				//AÑADIR IMAGENES
+				
+				layer.add(escenario);
+				layer.add(pantalla);
+				layer.add(fondo);
+				layer.add(planeta);				
+				layer.add(personaje01);
+				layer.add(personaje02);
+				layer.add(personaje03);
+				layer.add(personaje04);				
+				layer.add(tablero);
+				layer.add(salida01);
+				layer.add(salida02);
+				layer.add(salida03);
+				layer.add(salida04);
+				layer.add(salida05);
+				layer.add(salida06);
+				layer.add(ficha01);
+				layer.add(ficha02);
+				layer.add(ficha03);
+				layer.add(ficha04);
+				layer.add(ficha05);
+				layer.add(ficha06);
+				layer.add(cartela);
+				layer.add(titulo);
+				layer.add(daoNum);
+				layer.add(turnoImg);
+				layer.add(turnoColor);
+				layer.add(nueva);
+				layer.add(dado);
+				layer.add(modal0);
+				layer.add(modal1);
+				layer.add(modal2);
+				layer.add(modal3);
+				layer.add(modal4);
+				layer.add(si);
+				layer.add(no);
+
+				hideModal();
+				
+				for(k=1;k<=5;k++){
+					for(i=0;i<type_magnetos.length;i++){					
+						num = (i<=9) ? "0"+i :i; 
+						layer.add(eval("ilu"+k+"Extra"+num));
+					}
+				}
+				
+				for(i=0;i<type_magnetos.length;i++){					
+					num = (i<=9) ? "0"+i :i; 
+					layer.add(eval("magneto"+num));
+				}
+				//Preguntas son 3 x 5 colores = 15
+				for(i=0;i<15;i++){					
+					num = (i<=9) ? "0"+i :i; 
+					layer.add(eval("pregunta_"+num));
+				}
+				
+				stage.add(layer);
+
+				//Todas la fichas inicialmente en top
+				for(i=1;i<=6;i++){
+					eval("ficha0"+i).moveToTop();
+					eval("var tween"+num+" = new Konva.Tween({	node: magneto"+num+", duration: 0.2, shadowBlur: 20, scaleX:zoom_fin, scaleY:zoom_fin, easing: Konva.Easings.BackEaseInOut});");
+				}
+
+				var numJugadores=parseInt(getParameterByName("num"));
+				var turno=0;
+
+				var puntos = new Array();
+				for(i=0;i<numJugadores;i++){
+					puntos[i]=0;
+				}
+
+				//Estabecemos los colores de las fichas
+				for(i=0;i<numJugadores;i++){
+					//Recogemos las fichas
+					eval('var fichacolor0'+parseInt(i+1)+' = parseInt(getParameterByName("jugador'+parseInt(i+1)+'"));');
+					//Asignamos los colores a las fichas
+					eval("ficha0"+parseInt(i+1)).setImage(eval("images.ficha0"+eval("fichacolor0"+parseInt(i+1))));
+				}
+
+				//Quitamos las que no juegan
+				for(i=numJugadores+1;i<=6;i++){
+					eval("ficha0"+parseInt(i)).hide();
+				}
+
+				function getParameterByName(name) {
+					name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+					var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+					results = regex.exec(location.search);
+					return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+				}
+
+				//Colocamos las fichas en el escenario
+				var posicionFicha = [0,0,0,0,0,0];
+				var mundos = [0,0,0,0,0,0]; //0 es el mundo principal y 1 es el mundo interior
+
+				function colocaFichas(){
+					var posiciones = [0,8,16,24,32,40];
+					//Coloca las S
+					for(p=0;p<6;p++){
+						positionToMove = posiciones[p];
+						mueveSalidas(p+1,positionToMove);
+					}
+					for(p=0;p<numJugadores;p++){
+						positionToMove = posiciones[eval("fichacolor0"+(p+1))-1];
+						mueveFicha(p+1,positionToMove,false);
+						posicionFicha[p]=positionToMove;
+					}
+
+				};
+
+				//Fichas especiales
+				var fichas_00 = [0,5,10,16,22,27,33,39,45]; //verdes
+				var fichas_01 = [1,6,11,17,23,29,34,40,46]; 	//amarillas
+				var fichas_02 = [2,7,13,18,24,30,35,41];	//azules
+				var fichas_03 = [3,8,14,19,25,31,37,42];	//naranjas
+				var fichas_04 = [9,15,21,26,32,38,43];	//rojas
+
+				var puntuaciones_00 = [1,2,3];
+				var puntuaciones_01 = [1,2,3];
+				var puntuaciones_02 = [1,2,3];
+				var puntuaciones_03 = [1,2,3];
+				var puntuaciones_04 = [1,2,3];
+
+
+
+
+				colocaFichas();
+
+				function mueveSalidas(target, magnet){
+					i = (magnet<=9) ? "0"+magnet :magnet;
+					targetToToMove = eval("salida0"+parseInt(target));
+					targetToToMove.moveToTop();
+					switch(magnet){
+						case 0:
+							x = (eval("magneto"+i).getX()+eval("magneto"+i).getWidth()*0.3);
+							y = (eval("magneto"+i).getY()+eval("magneto"+i).getHeight()*0.3);
+							break;
+						case 8:
+							x = (eval("magneto"+i).getX()+eval("magneto"+i).getWidth()*0.25);
+							y = (eval("magneto"+i).getY()+eval("magneto"+i).getHeight()*0.26);
+							break;
+						case 16:
+							x = (eval("magneto"+i).getX()+eval("magneto"+i).getWidth()*0.25);
+							y = (eval("magneto"+i).getY()+eval("magneto"+i).getHeight()*0.26);
+							break;
+						case 24:
+							x = (eval("magneto"+i).getX()+eval("magneto"+i).getWidth()*0.3);
+							y = (eval("magneto"+i).getY()+eval("magneto"+i).getHeight()*0.3);
+							break;
+						case 32:
+							x = (eval("magneto"+i).getX()+eval("magneto"+i).getWidth()*0.25);
+							y = (eval("magneto"+i).getY()+eval("magneto"+i).getHeight()*0.26);
+							break;
+						case 40:
+							x = (eval("magneto"+i).getX()+eval("magneto"+i).getWidth()*0.25);
+							y = (eval("magneto"+i).getY()+eval("magneto"+i).getHeight()*0.26);
+							break;
+					}
+
+					targetToToMove.setX(x);
+					targetToToMove.setY(y);
+
+				}
+
+				function BugSalidas(){
+					for(j=0;j<6;j++){
+						eval("salida0"+parseInt(j+1)).moveToTop();
+					}
+					for(j=0;j<6;j++){
+						eval("ficha0"+parseInt(j+1)).moveToTop();
+					}
+				}
+
+				function mueveFicha(target, magnet, cambioTurno=true,cambioMundo=false,errorColocacion=false) {
+					//BugSalidas();
+					stopAllSounds();
+					errorColocacion ? audioError.play() : audioFicha.play();
+					i = (magnet<=9) ? "0"+magnet :magnet;
+					targetToToMove = eval("ficha0"+parseInt(target));
+					targetToToMove.moveToTop();
+					if(type_magnetos[magnet]==1){
+						x = (eval("magneto"+i).getX()+eval("magneto"+i).getWidth()/5);
+						y = (eval("magneto"+i).getY()+eval("magneto"+i).getHeight()/5);
+					}
+					else{
+						x = (eval("magneto"+i).getX()+eval("magneto"+i).getWidth()/7);
+						y =(eval("magneto"+i).getY()+eval("magneto"+i).getHeight()/7);
+					}
+					targetToToMove.to({
+							x: x,
+							y: y,
+							duration: 0.2,
+							easing: Konva.Easings.ElasticEaseInOut
+					});
+
+					if(cambioTurno==true){
+
+						//Doble dado
+						var dobleDado = [2,10,18,26,34,42];
+						var dobleFound = dobleDado.includes(magnet);
+						var fichas_00_found = fichas_00.includes(magnet);
+						var fichas_01_found = fichas_01.includes(magnet);
+						var fichas_02_found = fichas_02.includes(magnet);
+						var fichas_03_found = fichas_03.includes(magnet);
+						var fichas_04_found = fichas_04.includes(magnet);
+						console.log("magnet="+magnet);
+						console.log("fichas_00_found="+fichas_00_found);
+						console.log("fichas_01_found="+fichas_01_found);
+						console.log("fichas_02_found="+fichas_02_found);
+						console.log("fichas_03_found="+fichas_03_found);
+						console.log("fichas_04_found="+fichas_04_found);
+						if(!cambioMundo){
+							cambiaTurno();
+
+							recarga = setTimeout(() => {
+							  if(fichas_00_found) showModal(0);
+							  if(fichas_01_found) showModal(1);
+							  if(fichas_02_found) showModal(2);
+							  if(fichas_03_found) showModal(3);
+							  if(fichas_04_found) showModal(4);
+
+							}, 500);
+
+
+							deiluminaCasillas();
+						}
+						else{
+							clearTimeout(recarga);
+							hideModal();
+						}
+
+						setTimeout(function(){
+							//Detección de colisiones entre la ficha target y las demás
+							for(f=1;f<=numJugadores;f++){
+								if(target!=f){
+									if(haveIntersectionFichas(target, f)){
+										eval("ficha0"+target).to({
+											y: eval("ficha0"+target).getY()+stage.getHeight()*0.03,
+											duration: 0.2,
+											easing: Konva.Easings.ElasticEaseInOut
+										});
+										eval("ficha0"+f).to({
+											y: eval("ficha0"+f).getY()-stage.getHeight()*0.03,
+											duration: 0.2,
+											easing: Konva.Easings.ElasticEaseInOut
+										});
+									}
+								}
+							}
+						}, 300);
+
+					}
+
+				}
+
+				function iluminaCasilla(k){
+					magnet = (k<=9) ? "0"+k :k; 
+					
+					for(k=1;k<=5;k++){
+						eval("ilu"+k+"Extra"+magnet).moveToTop();
+						eval("ilu"+k+"Extra"+magnet).setShadowOpacity(1);
+					}
+					eval("magneto"+magnet).moveToTop();	
+					//Las fichas siempre por encima
+					for(i=0;i<numJugadores;i++){						
+						eval("ficha0"+parseInt(i+1)).moveToTop();						
+					}
+					BugSalidas();
+				}
+
+				function deiluminaCasillas(){
+					for(i=0;i<=71;i++){
+						magnet = (i<=9) ? "0"+i :i; 
+						//eval("magneto"+magnet).setShadowOpacity(0);
+						for(k=1;k<=5;k++){
+							eval("ilu"+k+"Extra"+magnet).setShadowOpacity(0);
+						}
+						
+					}
+				}
+
+				var angularSpeed = 10;
+				var anim = new Konva.Animation(function (frame) {
+					var angleDiff = (Math.floor((Math.random() * 3000))) / 10;
+					dado.rotate(angleDiff);					
+				}, layer);
+
+				function getNum(){					
+					return parseInt(daoNum.getImage().src.slice(-5).charAt(0));
+				}
+				
+				function setNum(i){
+					daoNum.setImage(eval("images.num0"+i));					
+				}
+
+				//Lanzar dado
+				var bloqueoDado=false;
+				dado.on("mousedown tap", function(){					
+					if(!bloqueoDado){
+						audioDado.play();
+						bloqueoDado=true;
+						tirada=0;
+						myInterval = setInterval(function () {
+							var num = Math.floor((Math.random() * 6) + 1);
+							//dadoNum.setText("");
+							daoNum.setVisible(false);
+							dado.setImage(eval("images.dado0"+num));
+							anim.start();
+							layer.draw();
+							tirada++;
+							if(tirada>4){
+								daoNum.setVisible(true);
+								setNum(num);
+								//dadoNum.setText(num);
+								clearInterval(myInterval);
+								dado.rotation(0);
+								anim.stop();
+								dadoLanzado(num);
+								//Habilitamos la ficha del jugador actual
+								eval("ficha0"+turno).setDraggable(true);
+
+							}
+						}, 200);	
+					}								
+				});
+
+				var casilla1 = 0;
+				var casilla2 = 0;
+				
+
+				function dadoLanzado(num){				
+					
+					//Desiluminamos las casillas
+					deiluminaCasillas();
+					//casilla1 = posicionFicha[turno-1]-num;
+					casilla2 = posicionFicha[turno-1]+num;
+					
+					
+					if(casilla2>47 && mundos[turno-1]==0){
+						casilla2 = casilla2-48;						
+					}
+					
+					if(casilla2>71 && mundos[turno-1]==1){
+						casilla2 = casilla2-24;						
+					}					
+					//Iluminamos las casillas a las que se puede mover con resultado num	
+					iluminaCasilla(casilla2);					
+				}
+
+				function cambiaTurno(dobleTirada=false){
+					if(!dobleTirada) turno++;
+					if(turno>numJugadores){
+						turno=1;
+					}					
+					turnoColor.to({
+						scaleX: 0,
+						scaleY: 0,
+						duration: 0.3,
+						easing: Konva.Easings.ElasticEaseInOut
+					});
+					setTimeout(function(){
+						turnoColor.setImage(eval("images.ficha0"+eval("fichacolor0"+turno)));
+						
+						turnoImg.setImage(eval("images.turno0"+turno));
+						bloqueoDado=false;
+						daoNum.setVisible(false);
+						turnoColor.to({
+							scaleX: 1,
+							scaleY: 1,
+							duration: 0.3,
+							easing: Konva.Easings.ElasticEaseInOut
+						});
+						//Deshabilitamos las fichas
+						for(i=1;i<=numJugadores;i++){
+							eval("ficha0"+i).setDraggable(false);							
+						}						
+					}, 300);
+					
+				}
+				
+				
+				//Ponemos el turno a 1
+				turnoColor.setScaleX(0);
+				turnoColor.setScaleY(0);
+				cambiaTurno();				
+				
+				function haveIntersection(casilla, ficha) {							
+					pFicha = (ficha<=9) ? "0"+ficha :ficha; 
+					pCasilla = (casilla<=9) ? "0"+casilla :casilla; 
+					
+				
+					pretition=3;
+					
+					fichaX = eval("ficha"+pFicha).getX() - eval("ficha"+pFicha).getWidth() / 2.8;
+					fichaY = eval("ficha"+pFicha).getY() + eval("ficha"+pFicha).getHeight() / 2;					
+					
+					if(type_magnetos[casilla]==1){
+						casillaX = eval("magneto"+pCasilla).getX() ;
+						casillaY = eval("magneto"+pCasilla).getY() + eval("magneto"+pCasilla).getHeight()*.5;
+					}
+					else{
+						casillaX = eval("magneto"+pCasilla).getX() - eval("magneto"+pCasilla).getWidth()*.1;
+						casillaY = eval("magneto"+pCasilla).getY() + eval("magneto"+pCasilla).getHeight()*.5;
+					}					
+					return !(
+						fichaX >  casillaX + eval("magneto"+pCasilla).getWidth()/pretition ||
+						fichaX +  eval("ficha"+pFicha).getWidth()/pretition < casillaX ||
+						fichaY > casillaY + eval("magneto"+pCasilla).getHeight()/pretition ||
+						fichaY +  eval("ficha"+pFicha).getHeight()/pretition < casillaY
+					);
+			  	}
+
+				function showModal(i){
+					eval("modal"+i).setVisible(true);
+					si.setVisible(true);
+					no.setVisible(true);
+					eval("modal"+i).moveToTop();
+					var p = Math.floor(Math.random() * 3);
+					texto = new Konva.Text({
+						text: "Puntos: " + opinionQuestion[i][p]["points"] + '\n' + opinionQuestion[i][p]["question"],
+						fontSize: 25,
+						fontFamily: 'Calibri',
+						fill: 'black',
+						align: 'center',
+						width: ancho_esce/2.7,
+						height: alto_esce/2.5,
+						x: pantalla.getX()+pantalla.getWidth()*.91,
+						y: pantalla.getY()+pantalla.getHeight()*.9,
+						offset: {
+							x: ancho_esce/2,
+							y: alto_esce/2
+						}
+					});
+
+					var grupo = new Konva.Group();
+					grupo.add(eval("modal"+i));
+					grupo.add(texto);
+					grupo.add(si);
+					grupo.add(no);
+
+					layer.add(grupo);
+
+					layer.draw();
+				}
+				function hideModal(){
+					modal0.setVisible(false);
+					modal1.setVisible(false);
+					modal2.setVisible(false);
+					modal3.setVisible(false);
+					modal4.setVisible(false);
+					si.setVisible(false);
+					no.setVisible(false);
+					texto.setVisible(false);
+					layer.draw();
+				}
+				si.on('mousedown tap',function() {					
+					stopAllSounds();
+					audioExito.play();
+					cambiaTurno(true);					
+					hideModal();
+				});
+				no.on('mousedown tap',function() {
+					stopAllSounds();
+					audioFallo.play();
+					cambiaTurno(true);
+					hideModal();
+				});
+
+				function haveIntersectionFichas(ficha1, ficha2) {						
+					pFicha1 = (ficha1<=9) ? "0"+ficha1 :ficha1; 
+					pFicha2 = (ficha2<=9) ? "0"+ficha2 :ficha2; 				
+				
+					pretition=3;
+					
+					ficha1X = eval("ficha"+pFicha1).getX() - eval("ficha"+pFicha1).getWidth() / 2.8;
+					ficha1Y = eval("ficha"+pFicha1).getY() + eval("ficha"+pFicha1).getHeight() / 2;	
+					
+					ficha2X = eval("ficha"+pFicha2).getX() - eval("ficha"+pFicha2).getWidth() / 2.8;
+					ficha2Y = eval("ficha"+pFicha2).getY() + eval("ficha"+pFicha2).getHeight() / 2;
+
+					return !(
+						ficha1X >  ficha2X + eval("ficha"+pFicha2).getWidth()/pretition ||
+						ficha1X +  eval("ficha"+pFicha2).getWidth()/pretition <ficha2X ||
+						ficha1Y > ficha2Y + eval("ficha"+pFicha2).getHeight()/pretition ||
+						ficha1Y +  eval("ficha"+pFicha1).getHeight()/pretition < ficha2Y
+					);
+			  	}
+				
+				
+
+      		}//Fin de la función buildStage	  
+			
+			
+			//CREAR EL CONTAINER
+			var stage = new Konva.Stage({
+				container: 'container',
+				width: window.innerWidth,
+				height: window.innerHeight,
+			});
+
+      		var layer = new Konva.Layer();
+       
+			
+			
+			
+	   		//INCLUIR LAS IMAGENES
+			var sources = {
+				ficha01: "ficha01.png",
+				ficha02: "ficha02.png",
+				ficha03: "ficha03.png",
+				ficha04: "ficha04.png",							
+				ficha05: "ficha05.png",
+				ficha06: "ficha06.png",
+				salida: "salida.png",
+				modal0: "modal0.png",
+				modal1: "modal1.png",
+				modal2: "modal2.png",
+				modal3: "modal3.png",
+				modal4: "modal4.png",
+				si: "si.png",
+				no: "no.png",
+				magnet01: "magneto01.png",
+				magnet02: "magneto02.png",
+				magnet03: "magneto03.png",
+				magnet04: "magneto04.png",
+				magnet05: "magneto05.png",
+				magnet06: "magneto06.png",
+				magnet07: "magneto07.png",
+				magnet08: "magneto08.png",
+				magnet09: "magneto09.png",				
+				escenario: 	'escenario.png',
+				personaje01: 	'personaje01.png',
+				personaje02: 	'personaje02.png',
+				personaje03: 	'personaje03.png',
+				personaje04: 	'personaje04.png',
+				cartela: 	'cartela.png',
+				dado: 	'dado.png',
+				dado01: 	'dado01.png',
+				dado02: 	'dado02.png',
+				dado03: 	'dado03.png',
+				dado04: 	'dado04.png',
+				dado05: 	'dado05.png',
+				dado06: 	'dado06.png',
+				num01: 	'num01.png',
+				num02: 	'num02.png',
+				num03: 	'num03.png',
+				num04: 	'num04.png',
+				num05: 	'num05.png',
+				num06: 	'num06.png',
+				turno01: 	'turno01.png',
+				turno02: 	'turno02.png',
+				turno03: 	'turno03.png',
+				turno04: 	'turno04.png',
+				turno05: 	'turno05.png',
+				turno06: 	'turno06.png',
+				titulo: 	'titulo.png',
+				nueva: 		'nueva.png',
+				planeta: 	'planeta.png',
+				tablero: 	'tablero.png',
+				pantalla: 	'pantalla.png',
+				fondo: 	'fondo.png'				
+			};
+			
+			total=48;
+			for(i=0;i<total;i++){
+				t = (i<9) ? "0"+eval(i+1) : eval(i+1); 
+				eval('sources["magnet'+t+'"] = "magnet/m'+t+'.png"');				
+			}
+			
+			/*for(i=0;i<16;i++){
+				t = (i<9) ? "0"+eval(i+1) : eval(i+1);
+				eval('sources["pregunta_'+t+'"] = "preguntas/pregunta_'+t+'.png"');				
+			}*/
+			
+	   		//CARGAR LAS FUNCIONES
+      		loadImages(sources, buildStage);
+			
+			
+			
+        </script>
+    </body>
+</html>
