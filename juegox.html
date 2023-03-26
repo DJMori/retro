@@ -1454,14 +1454,14 @@
 				}
 				si.on('mousedown tap',function() {
 					var puntos = texto.text().split("Puntos: ")[1].split("\n")[0];
-					console.log(turno);
-					if(turno == 1){
-						var sumaPuntos = parseInt(puntos) + parseInt(marcadores[numJugadores-1].text().split(": ")[1]);
-						marcadores[numJugadores-1].text(marcadores[numJugadores-1].text().split(": ")[0] + ": " + parseInt(puntos));
-					}else{
-						var sumaPuntos = parseInt(puntos) + parseInt(marcadores[turno-2].text().split(": ")[1]);
-						marcadores[turno-2].text(marcadores[turno-2].text().split(": ")[0] + ": " + parseInt(puntos));
-					}
+					var jugador = turno == 1 ? numJugadores - 1 : turno - 2;
+					var currentPuntos = parseInt(marcadores[jugador].text().split(": ")[1]);
+					var sumaPuntos;
+					console.log("puntos="+puntos);
+					console.log("jugador="+jugador);
+					console.log("currentPuntos="+currentPuntos);
+					sumaPuntos = currentPuntos + parseInt(puntos);
+					marcadores[jugador].text(marcadores[jugador].text().split(": ")[0] + ": " + parseInt(sumaPuntos));
 					stopAllSounds();
 					audioExito.play();
 					cambiaTurno(true);					
