@@ -289,7 +289,22 @@
 						y: alto_esce/2
 					}
 				});
-				var modal0 = 
+				var questionKonvaText = new Konva.Text({
+					fontSize: 22,
+					fontFamily: "Calibri",
+					fill: "black",
+					align: "left",
+					wrap: "word",
+				});
+
+				var optionsKonvaText = new Konva.Text({
+					fontSize: 18,
+					fontFamily: "Calibri",
+					fill: "black",
+					align: "left",
+					wrap: "word",
+				});
+								var modal0 = 
 					new Konva.Image({
 						image: images.modal0,
 						width: ancho_esce/2.5,
@@ -1121,7 +1136,7 @@
 							if (special.includes(magnet)) {
 							  duelo=true;	
 							} else {
-							  duelo=false;	
+							  duelo=true;	
 							}
 																				
 							
@@ -1369,37 +1384,28 @@
 					btn_b.setVisible(true);
 					btn_c.setVisible(true);
 					btn_d.setVisible(true);
+					questionKonvaText.setVisible(true);
+					optionsKonvaText.setVisible(true);
 					duelo.moveToTop();
+					questionKonvaText.moveToTop();
+					optionsKonvaText.moveToTop();
+					
 					const randomQuestion = getRandomQuestion(duelQuestions);
 					const questionText = formatQuestion(randomQuestion);
 					const optionsText = formatOptions(randomQuestion.options);
-
-					current_answer = randomQuestion.answer;
-					const questionKonvaText = new Konva.Text({
-						text: questionText,
-						fontSize: 22,
-						fontFamily: "Calibri",
-						fill: "black",
-						align: "left",
-						width: pantalla.getWidth() * 0.35,
-						height: alto_esce / 2.5,
-						x: pantalla.getWidth() * 0.58,
-						y: pantalla.getHeight() * 0.35,
-						wrap: "word",
-					  });
-
-					  const optionsKonvaText = new Konva.Text({
-						text: optionsText,
-						fontSize: 18,
-						fontFamily: "Calibri",
-						fill: "black",
-						align: "left",
-						width: pantalla.getWidth() * 0.35,
-						height: alto_esce / 2.5,
-						x: pantalla.getWidth() * 0.58,
-						y: pantalla.getHeight() * 0.40,
-						wrap: "word",
-					  });		
+					console.log(randomQuestion.question);
+					current_answer = randomQuestion.answer;					
+					questionKonvaText.text(questionText);
+					questionKonvaText.width(pantalla.getWidth() * 0.35);
+					questionKonvaText.height(alto_esce / 2.5);
+					questionKonvaText.x(pantalla.getWidth() * 0.58);
+					questionKonvaText.y(pantalla.getHeight() * 0.35);
+		
+					optionsKonvaText.text(optionsText);
+					optionsKonvaText.width(pantalla.getWidth() * 0.35);
+					optionsKonvaText.height(alto_esce / 2.5);
+					optionsKonvaText.x(pantalla.getWidth() * 0.58);
+					optionsKonvaText.y(pantalla.getHeight() * 0.40);	
 
 
 					var grupo = new Konva.Group();
@@ -1422,9 +1428,7 @@
 
 				function formatOptions(options) {
 				  return options.map((option, index) => String.fromCharCode(97 + index) + ") " + option).join("\n");
-				}
-
-				
+				}				
 				
 				function getRandomQuestion(questions) {
 				  const randomIndex = Math.floor(Math.random() * questions.length);
@@ -1494,7 +1498,7 @@
 				  cambiaTurno(true);
 				  hideModal();
 				  questionKonvaText.setVisible(false);
-					optionsKonvaText.setVisible(false);
+				  optionsKonvaText.setVisible(false);
 				}
 				
 				btn_a.on('mousedown tap', function() {
