@@ -136,6 +136,7 @@
 					answer: 3,
 				}
 			];
+			var current_answer=0;
 
 
 			function loadImages(sources, callback) {
@@ -348,7 +349,31 @@
 							y: alto_esce/2
         				}				
         			});//Fin función Konva
-					
+				var duelo = 
+					new Konva.Image({
+						image: images.duelo,
+						width: ancho_esce/2.5,
+    					height: alto_esce/2.5,
+						x: pantalla.getX()+pantalla.getWidth()*.9,
+						y: pantalla.getY()+pantalla.getHeight()*.75,
+						offset: {
+							x: ancho_esce/2,
+							y: alto_esce/2
+        				}				
+        			});//Fin función Konva
+				var score = 
+					new Konva.Image({
+						image: images.score,
+						width: ancho_esce/2.5,
+    					height: alto_esce/2.5,
+						x: pantalla.getX()+pantalla.getWidth()*1.4,
+						y: pantalla.getY()+pantalla.getHeight()*.82,
+						offset: {
+							x: ancho_esce/2,
+							y: alto_esce/2
+        				}				
+        			});//Fin función Konva	
+				
 				var si = 
 					new Konva.Image({
 						image: images.si,
@@ -373,7 +398,43 @@
 							y: alto_esce/6/2
         				}				
         			});//Fin función Konva
-
+				
+				var btn_a = 
+					new Konva.Image({
+						image: images.btn_a,
+						width: ancho_esce/10,
+    					height: alto_esce/10,
+						x: pantalla.getX()+pantalla.getWidth()*.41,
+						y: pantalla.getY()+pantalla.getHeight()*.52
+											
+        			});//Fin función Konva
+				var btn_b = 
+					new Konva.Image({
+						image: images.btn_b,
+						width: ancho_esce/10,
+    					height: alto_esce/10,
+						x: pantalla.getX()+pantalla.getWidth()*.50,
+						y: pantalla.getY()+pantalla.getHeight()*.52
+										
+        			});//Fin función Konva
+				var btn_c = 
+					new Konva.Image({
+						image: images.btn_c,
+						width: ancho_esce/10,
+    					height: alto_esce/10,
+						x: pantalla.getX()+pantalla.getWidth()*.59,
+						y: pantalla.getY()+pantalla.getHeight()*.52
+										
+        			});//Fin función Konva
+				var btn_d = 
+					new Konva.Image({
+						image: images.btn_d,
+						width: ancho_esce/10,
+    					height: alto_esce/10,
+						x: pantalla.getX()+pantalla.getWidth()*.68,
+						y: pantalla.getY()+pantalla.getHeight()*.52										
+        			});//Fin función Konva
+					
 					
 				var tablero = 
 					new Konva.Image({
@@ -835,8 +896,14 @@
 				layer.add(modal2);
 				layer.add(modal3);
 				layer.add(modal4);
+				layer.add(score);
+				layer.add(duelo);
 				layer.add(si);
 				layer.add(no);
+				layer.add(btn_a);
+				layer.add(btn_b);
+				layer.add(btn_c);
+				layer.add(btn_d);
 
 				hideModal();
 				
@@ -870,19 +937,23 @@
 				var turno=0;
 
 				var marcadores = new Array();
+				var color_equipo = new Array();
+				color_equipo = ["#f34336","#673bb7","#feea3b","#4cb24f","#e1487c","#07a9f4"];
 				for(i=0;i<numJugadores;i++){
+					
 					var marcador = new Konva.Text({
-						x: 50,
-						y: 30 + (i*35),
-						text: 'Jugador '+ (i+1) + ': 0',
+						x: stage.getWidth()*.72,
+						y: stage.getHeight()*0.42 + stage.getHeight()*i/25,
+						text: 'Equipo '+ (i+1) + ': 0',
 						fontSize: 40,
 						fontFamily: 'Calibri',
-						fill: 'white',
+						fill: color_equipo[parseInt(getParameterByName("jugador"+parseInt(i+1)))-1],
 					});
 					marcadores[i]=marcador;
 					layer.add(marcador);
 				}
 
+				//
 				//Estabecemos los colores de las fichas
 				for(i=0;i<numJugadores;i++){
 					//Recogemos las fichas
@@ -923,6 +994,7 @@
 				};
 
 				//Fichas especiales
+				var special = [4, 12, 20, 28, 36, 44, 50, 54, 58, 62, 66, 70];
 				var fichas_00 = [0,5,10,16,22,27,33,39,45]; //verdes
 				var fichas_01 = [1,6,11,17,23,29,34,40,46]; 	//amarillas
 				var fichas_02 = [2,7,13,18,24,30,35,41];	//azules
@@ -986,7 +1058,9 @@
 				}
 
 				function mueveFicha(target, magnet, cambioTurno=true,cambioMundo=false,errorColocacion=false) {
+					
 					//BugSalidas();
+					var duelo = false;
 					stopAllSounds();
 					errorColocacion ? audioError.play() : audioFicha.play();
 					i = (magnet<=9) ? "0"+magnet :magnet;
@@ -1025,15 +1099,45 @@
 						console.log("fichas_04_found="+fichas_04_found);
 						if(!cambioMundo){
 							cambiaTurno();
+							//Detección de colisiones (DUELO)
+							for(f=1;f<=numJugadores;f++){
+								if(target!=f){
+									if(haveIntersectionFichas(target, f)){
+										eval("ficha0"+target).to({
+											y: eval("ficha0"+target).getY()+stage.getHeight()*0.03,
+											duration: 0.2,
+											easing: Konva.Easings.ElasticEaseInOut
+										});
+										eval("ficha0"+f).to({
+											y: eval("ficha0"+f).getY()-stage.getHeight()*0.03,
+											duration: 0.2,
+											easing: Konva.Easings.ElasticEaseInOut
+										});																			
+									}
+									
+								}
+							}
+							
+							if (special.includes(magnet)) {
+							  duelo=true;	
+							} else {
+							  duelo=false;	
+							}
+																				
+							
+							if(!duelo){
+								recarga = setTimeout(() => {
+								  if(fichas_00_found) showModal(0);
+								  if(fichas_01_found) showModal(1);
+								  if(fichas_02_found) showModal(2);
+								  if(fichas_03_found) showModal(3);
+								  if(fichas_04_found) showModal(4);
 
-							recarga = setTimeout(() => {
-							  if(fichas_00_found) showModal(0);
-							  if(fichas_01_found) showModal(1);
-							  if(fichas_02_found) showModal(2);
-							  if(fichas_03_found) showModal(3);
-							  if(fichas_04_found) showModal(4);
-
-							}, 500);
+								}, 500);
+							}
+							else{								
+								showDuelo(target);
+							}
 
 
 							deiluminaCasillas();
@@ -1043,6 +1147,7 @@
 							hideModal();
 						}
 
+						
 						setTimeout(function(){
 							//Detección de colisiones entre la ficha target y las demás
 							for(f=1;f<=numJugadores;f++){
@@ -1057,8 +1162,9 @@
 											y: eval("ficha0"+f).getY()-stage.getHeight()*0.03,
 											duration: 0.2,
 											easing: Konva.Easings.ElasticEaseInOut
-										});
+										});										
 									}
+									
 								}
 							}
 						}, 300);
@@ -1256,15 +1362,92 @@
 
 					layer.draw();
 				}
+				
+				function showDuelo(equipo){					
+					duelo.setVisible(true);
+					btn_a.setVisible(true);
+					btn_b.setVisible(true);
+					btn_c.setVisible(true);
+					btn_d.setVisible(true);
+					duelo.moveToTop();
+					const randomQuestion = getRandomQuestion(duelQuestions);
+					const questionText = formatQuestion(randomQuestion);
+					const optionsText = formatOptions(randomQuestion.options);
+
+					current_answer = randomQuestion.answer;
+					const questionKonvaText = new Konva.Text({
+						text: questionText,
+						fontSize: 22,
+						fontFamily: "Calibri",
+						fill: "black",
+						align: "left",
+						width: pantalla.getWidth() * 0.35,
+						height: alto_esce / 2.5,
+						x: pantalla.getWidth() * 0.58,
+						y: pantalla.getHeight() * 0.35,
+						wrap: "word",
+					  });
+
+					  const optionsKonvaText = new Konva.Text({
+						text: optionsText,
+						fontSize: 18,
+						fontFamily: "Calibri",
+						fill: "black",
+						align: "left",
+						width: pantalla.getWidth() * 0.35,
+						height: alto_esce / 2.5,
+						x: pantalla.getWidth() * 0.58,
+						y: pantalla.getHeight() * 0.40,
+						wrap: "word",
+					  });		
+
+
+					var grupo = new Konva.Group();
+					grupo.add(duelo);
+					grupo.add(questionKonvaText);
+					grupo.add(optionsKonvaText);
+					grupo.add(btn_a);
+					grupo.add(btn_b);
+					grupo.add(btn_c);
+					grupo.add(btn_d);
+
+					layer.add(grupo);
+
+					layer.draw();
+				}
+				
+				function formatQuestion(question) {
+				  return question.question;
+				}
+
+				function formatOptions(options) {
+				  return options.map((option, index) => String.fromCharCode(97 + index) + ") " + option).join("\n");
+				}
+
+				
+				
+				function getRandomQuestion(questions) {
+				  const randomIndex = Math.floor(Math.random() * questions.length);
+				  return questions[randomIndex];
+				}
+								
+				
 				function hideModal(){
 					modal0.setVisible(false);
 					modal1.setVisible(false);
 					modal2.setVisible(false);
 					modal3.setVisible(false);
 					modal4.setVisible(false);
+					duelo.setVisible(false);
 					si.setVisible(false);
 					no.setVisible(false);
+					btn_a.setVisible(false);
+					btn_b.setVisible(false);
+					btn_c.setVisible(false);
+					btn_d.setVisible(false);
 					texto.setVisible(false);
+					questionKonvaText.setVisible(false);
+					optionsKonvaText.setVisible(false);
 					layer.draw();
 				}
 				si.on('mousedown tap',function() {
@@ -1287,8 +1470,49 @@
 					audioFallo.play();
 					cambiaTurno(true);
 					hideModal();
+				});		
+				
+				
+				function handleAnswerSelection(selectedIndex) {				  
+				  console.log(turno);
+				  var jugador = turno == 1 ? numJugadores - 1 : turno - 2;
+				  var currentPuntos = parseInt(marcadores[jugador].text().split(": ")[1]);
+				  var sumaPuntos;
+
+				  if (selectedIndex == current_answer) {
+					sumaPuntos = currentPuntos + 10;
+					console.log("x2");
+					stopAllSounds();
+					audioExito.play();
+				  } else {
+					sumaPuntos = currentPuntos - 20;
+					if(sumaPuntos<0) sumaPuntos = 0;
+					console.log("x2");
+					stopAllSounds();
+					audioError.play();
+				  }
+
+				  marcadores[jugador].text(marcadores[jugador].text().split(": ")[0] + ": " + parseInt(sumaPuntos));				  
+				  cambiaTurno(true);
+				  hideModal();
+				}
+				
+				btn_a.on('mousedown tap', function() {
+				  handleAnswerSelection(0);
 				});
 
+				btn_b.on('mousedown tap', function() {
+				  handleAnswerSelection(1);
+				});
+
+				btn_c.on('mousedown tap', function() {
+				  handleAnswerSelection(2);
+				});
+
+				btn_d.on('mousedown tap', function() {
+				  handleAnswerSelection(3);
+				});
+				
 				function haveIntersectionFichas(ficha1, ficha2) {						
 					pFicha1 = (ficha1<=9) ? "0"+ficha1 :ficha1; 
 					pFicha2 = (ficha2<=9) ? "0"+ficha2 :ficha2; 				
@@ -1340,8 +1564,14 @@
 				modal2: "modal2.png",
 				modal3: "modal3.png",
 				modal4: "modal4.png",
+				duelo: "duelo.png",
+				score: "score.png",
 				si: "si.png",
 				no: "no.png",
+				btn_a: "a.png",
+				btn_b: "b.png",
+				btn_c: "c.png",
+				btn_d: "d.png",
 				magnet01: "magneto01.png",
 				magnet02: "magneto02.png",
 				magnet03: "magneto03.png",
