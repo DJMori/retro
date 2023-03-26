@@ -1269,7 +1269,14 @@
 				}
 				si.on('mousedown tap',function() {
 					var puntos = texto.text().split("Puntos: ")[1].split("\n")[0];
-										
+					console.log(turno);
+					if(turno == 1){
+						var sumaPuntos = parseInt(puntos) + parseInt(marcadores[numJugadores-1].text().split(": ")[1]);
+						marcadores[numJugadores-1].text(marcadores[numJugadores-1].text().split(": ")[0] + ": " + parseInt(puntos));
+					}else{
+						var sumaPuntos = parseInt(puntos) + parseInt(marcadores[turno-2].text().split(": ")[1]);
+						marcadores[turno-2].text(marcadores[turno-2].text().split(": ")[0] + ": " + parseInt(puntos));
+					}
 					stopAllSounds();
 					audioExito.play();
 					cambiaTurno(true);					
