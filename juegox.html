@@ -496,7 +496,7 @@
 						width: ancho_esce/3,
     					height: alto_esce/3,
 						x: stage.getWidth()*.01,
-						y: stage.getHeight()*.2
+						y: stage.getHeight()*.3
         			});//Fin función Konva
 				
 				var personaje04 = 
@@ -1445,9 +1445,7 @@
 					btn_b.setVisible(false);
 					btn_c.setVisible(false);
 					btn_d.setVisible(false);
-					texto.setVisible(false);
-					questionKonvaText.setVisible(false);
-					optionsKonvaText.setVisible(false);
+					texto.setVisible(false);					
 					layer.draw();
 				}
 				si.on('mousedown tap',function() {
@@ -1495,6 +1493,8 @@
 				  marcadores[jugador].text(marcadores[jugador].text().split(": ")[0] + ": " + parseInt(sumaPuntos));				  
 				  cambiaTurno(true);
 				  hideModal();
+				  questionKonvaText.setVisible(false);
+					optionsKonvaText.setVisible(false);
 				}
 				
 				btn_a.on('mousedown tap', function() {
